@@ -8,15 +8,15 @@ typedef struct lista{
 
 typedef struct branch{
   char nome;
-  commit* ptr;
+  commit* c;
 } branch;
 
 typedef struct head{
-  static constexpr char nome[] = "head";
+  char nome;
   branch* b;
 }head;
 
-head* git_init(void);
+void git_init(head** h, branch** b, commit** c);
 
 void git_branch(char nome, head* h);
 
