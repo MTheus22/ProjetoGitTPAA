@@ -22,7 +22,6 @@ void git_init(head** h, branch** b, commit** c){             // inicializa a hea
   master->c = first;
 
   Head->b = master;
-  Head->nome = 'h';
 
   *h = Head;
   *b = master;

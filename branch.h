@@ -12,7 +12,6 @@ typedef struct branch{
 } branch;
 
 typedef struct head{
-  char nome;
   branch* b;
 }head;
 
