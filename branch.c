@@ -41,5 +41,5 @@ void git_commit(int endereco, char mensagem, head* h){
   novo->anterior = aux;  // o novo commit aponta para o commit anterior
   aux->proximos = novo; // o commit anterior aponta para o novo commit
 
-  h->b->c = novo;    //movendo a head e a branch para o novo commit
+  (*((*h).b)).c = novo;    //movendo a head e a branch para o novo commit
 }
