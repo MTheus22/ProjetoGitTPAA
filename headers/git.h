@@ -1,7 +1,7 @@
 #ifndef GIT_H
 #define GIT_H
 
-typedef struct commit{
+typedef struct commit {
   unsigned char *hash;
   char message[100];
   struct commit *next;
@@ -24,13 +24,14 @@ typedef struct head {
   Commit *commit;
 } Head;
 
-void git_init(Head ** head, BranchList **branch_list);
+void git_init(Head **head, BranchList **branch_list);
 
-void git_branch(char *name, Head* const head, BranchList* const branch_list);
+void git_branch(char *name, Head *const head, BranchList *const branch_list);
 
-void git_commit(char *message, Head* const head);
+void git_commit(char *message, Head *const head);
 
-void first_commit(char *message, Head* const head, BranchList* const branch_list);
+void first_commit(char *message, Head *const head,
+                  BranchList *const branch_list);
 
 unsigned char *generate_hash(char *message);
 
