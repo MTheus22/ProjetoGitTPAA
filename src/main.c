@@ -17,7 +17,7 @@ int main(int argc, char *argv[]) {
   temp_branch_list = NULL;
 
   if(TESTMODE)
-	  print_test(head);
+	  print_test(head, branch_list);
 
   return EXIT_SUCCESS;
 }
