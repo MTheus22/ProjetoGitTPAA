@@ -15,5 +15,6 @@ void git_commit (gancho *cabeca, branch *repos_atual, head *repositorio, char *t
 void git_log(head *repositorio);
 char *gera_hash(gancho *cabeca);
 int verifica_combinacao(char *string, gancho *cabeca);
-
+int verificia_comando(gancho *cabeca,char *primeiro, char *segundo, char *terceiro);
+int verifica_terceiro(gancho *cabeca,char *terceiro);
 #endif

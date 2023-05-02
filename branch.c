@@ -1,5 +1,5 @@
-#include<stdio.h>
-#include<stdlib.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include "branch.h"
 #include <string.h>
 #define ERRO -1
@@ -10,7 +10,6 @@ struct gancho
 {
   lista *primeiro;
 };
-
 
 struct lista
 {
@@ -68,12 +67,12 @@ gancho *inicia_cabeca(void)
 void git_branch(lista *atual, char *nome_branch)
 {
   branch *novo = (branch *)malloc(sizeof(branch));
-  novo->repos_branch = atual; 
+  novo->repos_branch = atual;
   strcpy(novo->hash, atual->hash);
   strcpy(novo->nome, nome_branch);
 }
 
-void git_commit (gancho *cabeca, branch *repos_atual, head *repositorio, char *text)
+void git_commit(gancho *cabeca, branch *repos_atual, head *repositorio, char *text)
 {
   char string[10];
   lista *novo = (lista *)malloc(sizeof(lista));
@@ -130,48 +129,82 @@ void git_log(head *repositorio)
 head *git_checkout(head *repositorio, char *nome_branch, gancho *cabeca)
 {
   lista *atual = cabeca->primeiro;
-  
 }
 
 char *gera_hash(gancho *cabeca)
 {
-    char hash[10];
-    char string[50];
-    int resultado = 0;
-    for (int i=0; i < 5; i++)
-    {
-        string[2 * i] = 48 + (rand() % 9);
-        string[2 * i + 1] = 65 + (rand() % 6);
-    }
-    resultado = verifica_combinacao(string, cabeca);
-    if (resultado == ERRO)
-        strcpy(hash, hash = gera_hash(cabeca));
-    else
-    {
-        strcpy(hash, string);
-        return hash;
-    }
+  char hash[10];
+  char string[50];
+  int resultado = 0;
+  for (int i = 0; i < 5; i++)
+  {
+    string[2 * i] = 48 + (rand() % 9);
+    string[2 * i + 1] = 65 + (rand() % 6);
+  }
+  resultado = verifica_combinacao(string, cabeca);
+  if (resultado == ERRO)
+    strcpy(hash, hash = gera_hash(cabeca));
+  else
+  {
+    strcpy(hash, string);
+    return hash;
+  }
 }
 
 int verifica_combinacao(char *string, gancho *cabeca)
 {
-    lista *atual = cabeca->primeiro;
-    int resultado = 0;
-    if (cabeca->primeiro == NULL)
+  lista *atual = cabeca->primeiro;
+  int resultado = 0;
+  if (cabeca->primeiro == NULL)
+  {
+    return CORRETO;
+  }
+  else
+  {
+    while (atual != NULL)
     {
-        return CORRETO;
+      resultado = strcmp(atual->hash, string);
+      if (resultado == 0)
+      {
+        return ERRO;
+      }
+      atual = atual->proximo;
+    }
+    return CORRETO;
+  }
+}
+
+int verificia_comando(gancho *cabeca,char *primeiro, char *segundo, char *terceiro)
+{
+  int erro = 0;
+  if (strcmp(primeiro, "git") != 0)
+  {
+    printf("Comando nao reconhecido.\n");
+    return ERRO;
+  }
+  else
+  {
+    if (strcmp(segundo, "commit") == 0)
+    {
+    }
+    else if (strcmp(segundo, "log") == 0)
+    {
+    }
+    else if (strcmp(segundo, "checkout") == 0)
+    {
+    }
+    else if (strcmp(segundo, "branch") == 0)
+    {
     }
     else
     {
-        while (atual != NULL)
-        {
-            resultado = strcmp(atual->hash, string);
-            if (resultado == 0)
-            {
-                return ERRO;
-            }
-            atual = atual->proximo;
-        }
-        return CORRETO;
+      return ERRO;
     }
+  }
+  erro = verifica_terceiro(terceiro, cabeca);
+}
+
+int verifica_terceiro(gancho *cabeca,char *terceiro)
+{
+  lista *aux = cabeca->primeiro;
 }
