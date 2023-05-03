@@ -30,6 +30,10 @@ void git_branch(char *name, Head *const head, BranchList *const branch_list);
 
 void git_commit(char *message, Head *const head);
 
+void git_checkout(Head *const head, BranchList *const branch_list);
+
+void git_log(Head *const head);
+
 void first_commit(char *message, Head *const head,
                   BranchList *const branch_list);
 

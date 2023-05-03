@@ -1,4 +1,5 @@
 #include "../headers/git.h"
+#include "../headers/utils.h"
 #include <openssl/sha.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,6 +24,24 @@ void git_init(Head **head, BranchList **branch_list) {
   (*branch_list)->branch = NULL;
   (*branch_list)->next_branch = NULL;
   (*branch_list)->previous_branch = NULL;
+}
+
+void git_checkout(Head *const head, BranchList *const branch_list){
+
+}
+
+void git_log(Head *const head) {
+  Commit *current = head->commit;
+  if (head->branch == NULL)
+    printf("Commit: %s\n", get_hash_string(current->hash));
+  else
+    printf("Branch: %s\n", head->branch->name);
+  while (current != NULL) {
+    printf("Message: %s\n", current->message);
+    printf("Hash: %s\n", get_hash_string(current->hash));
+    current = current->next;
+  }
+  printf("\n");
 }
 
 void git_commit(char *message, Head *const head) {

@@ -1,10 +1,11 @@
 #include "../headers/git.h"
 #include "../headers/utils.h"
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#define TESTMODE 1
+#define TESTMODE false
 
 int main(int argc, char *argv[]) {
   Head *temp_head;
