@@ -207,4 +207,8 @@ int verificia_comando(gancho *cabeca,char *primeiro, char *segundo, char *tercei
 int verifica_terceiro(gancho *cabeca,char *terceiro)
 {
   lista *aux = cabeca->primeiro;
+  while (aux != NULL)
+  {
+    
+  }
 }
