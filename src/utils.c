@@ -48,17 +48,18 @@ void interactive_mode(char **argv, Head *const head,
                       BranchList *const branch_list) {
   char args[100];
   do {
-    scanf("%s", args);
+    scanf("%99s", args);
+    printf("antes do main");
     char *main_command = get_main_command(args);
-	handle_command(main_command, args, head, branch_list);
-  } while (strcmp(args, "quit"));
+    printf("antes do handle");
+    handle_command(main_command, args, head, branch_list);
+  } while (strcmp(args, "quit") != 0);
 }
 
-void menu_mode(Head *const head, BranchList *const branch_list){
-}
+void menu_mode(Head *const head, BranchList *const branch_list) {}
 
 void single_action_mode(char **argv, Head *const head,
-                        BranchList *const branch_list){}
+                        BranchList *const branch_list) {}
 
 bool handle_command(char *command, char *command_arguments, Head *const head,
                     BranchList *const branch_list) {
@@ -68,13 +69,14 @@ bool handle_command(char *command, char *command_arguments, Head *const head,
     return true;
   } else if (strcmp(command, "commit") == 0) {
     char *message = strstr(command_arguments, "-m ");
-	message = message + 3;
-    if (!message){
+    if (!message) {
       message = strstr(command_arguments, "--message ");
-	  message = message + strlen("--message ");
-	}
-    if (!message)
-      return true;
+      if (!message)
+        return false;
+      else
+        message = message + strlen("--message ");
+    } else
+      message = message + 3;
     git_commit(message, head);
     return true;
   } else if (strcmp(command, "branch") == 0) {
@@ -88,8 +90,8 @@ bool handle_command(char *command, char *command_arguments, Head *const head,
   } else if (strcmp(command, "merge") == 0) {
     return true;
   } else if (strcmp(command, "log") == 0) {
-	  printf("entrei aqui");
-	git_log(head);
+    printf("entrei aqui");
+    git_log(head);
     return true;
   } else {
     return false;
@@ -107,7 +109,7 @@ char *get_main_command(char *args) {
     return "checkout";
   else if (strstr(args, "merge"))
     return "merge";
-  else if (strstr(args, "merge"))
-    return "merge";
+  else if (strstr(args, "log"))
+    return "log";
   return NULL;
 }
