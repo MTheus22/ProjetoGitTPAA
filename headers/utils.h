@@ -19,7 +19,7 @@ void interactive_mode(char **argv, Head *const head,
 void single_action_mode(char **argv, Head *const head,
                         BranchList *const branch_list);
 
-char **read_param(int argc, char **argv);
+char *read_param(char *param, char *argv);
 
 char *get_main_command(char *args);
 

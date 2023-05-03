@@ -48,11 +48,12 @@ void interactive_mode(char **argv, Head *const head,
                       BranchList *const branch_list) {
   char args[100];
   do {
-    scanf("%99s", args);
-    printf("antes do main");
+    fgets(args, 100, stdin);
     char *main_command = get_main_command(args);
-    printf("antes do handle");
-    handle_command(main_command, args, head, branch_list);
+    if (!main_command)
+      printf("Comando invalido");
+    else
+      handle_command(main_command, args, head, branch_list);
   } while (strcmp(args, "quit") != 0);
 }
 
@@ -64,26 +65,20 @@ void single_action_mode(char **argv, Head *const head,
 bool handle_command(char *command, char *command_arguments, Head *const head,
                     BranchList *const branch_list) {
   command_arguments = strstr(command_arguments, "-");
-  printf("sapato");
   if (strcmp(command, "init") == 0) {
     return true;
   } else if (strcmp(command, "commit") == 0) {
-    char *message = strstr(command_arguments, "-m ");
-    if (!message) {
-      message = strstr(command_arguments, "--message ");
-      if (!message)
-        return false;
-      else
-        message = message + strlen("--message ");
-    } else
-      message = message + 3;
-    git_commit(message, head);
+    char *message = read_param("-m", command_arguments);
+    if (head->branch == NULL && head->commit == NULL)
+      first_commit(message, head, branch_list);
+    else
+      git_commit(message, head);
+	free(message);
     return true;
   } else if (strcmp(command, "branch") == 0) {
-    char *command_to_jump = "git branch ";
-    char *branch_name = strstr(command_arguments, command_to_jump);
-    branch_name = branch_name + strlen(command_to_jump);
+	char *branch_name = read_param("git branch ", command_arguments);
     git_branch(branch_name, head, branch_list);
+	free(branch_name);
     return true;
   } else if (strcmp(command, "checkout") == 0) {
     return true;
@@ -112,4 +107,31 @@ char *get_main_command(char *args) {
   else if (strstr(args, "log"))
     return "log";
   return NULL;
+}
+
+char *read_param(char *param, char *args) {
+  char *param_start = strstr(args, param);
+  if (!param_start)
+    return NULL;
+  char *param_content_start = param_start + strlen(param) + 1;
+  char *next_param = strstr(param_content_start, "-");
+  if (!next_param) {
+	char *param_content_buffer = malloc(strlen(param_content_start)); // Only for free always work outside
+	strcpy(param_content_buffer, param_content_start);
+    return param_content_buffer;
+  } else {
+    int param_length = next_param - param_content_start -
+                       1; //-1 for removing the space for the next param
+    char *param_content = malloc(param_length + 1);
+    memcpy(param_content, param_content_start, param_length);
+    *(param_content + param_length) = '\0';
+    return param_content;
+  }
+}
+
+bool param_exist(char *param, char *args) {
+  if (strstr(param, args))
+    return true;
+  else
+    return false;
 }

@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #ifndef GIT_H
 #define GIT_H
 
@@ -15,14 +16,18 @@ typedef struct branch {
 
 typedef struct branchList {
   Branch *branch;
-  Branch *next_branch;
-  Branch *previous_branch;
+  struct branchList *next_branch;
 } BranchList;
 
 typedef struct head {
   Branch *branch;
   Commit *commit;
 } Head;
+
+typedef struct error{
+  bool is_error;
+  char error_log[100];
+} Error;
 
 void git_init(Head **head, BranchList **branch_list);
 
@@ -40,5 +45,7 @@ void first_commit(char *message, Head *const head,
 unsigned char *generate_hash(char *message);
 
 unsigned char *generate_string_to_hash(char *message);
+
+void list_branches(Head *const head, BranchList *const branch_list);
 
 #endif

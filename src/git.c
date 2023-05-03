@@ -7,11 +7,26 @@
 #include <time.h>
 
 void git_branch(char *name, Head *const head, BranchList *const branch_list) {
+  if (!name)
+    list_branches(head, branch_list);
   Branch *new_branch = malloc(sizeof(Branch));
   strcpy(new_branch->name, name);
   new_branch->commit = head->commit;
-  if (branch_list->branch == NULL)
+  if (branch_list->branch == NULL){
     branch_list->branch = new_branch;
+
+  }
+}
+
+void initialize_branch_list(BranchList *const branch_list, Branch *new_branch){
+	branch_list->next_branch = NULL;
+	branch_list->branch = new_branch;
+}
+
+void insert_branch_list(BranchList *const branch_list, Branch *new_branch){
+	branch_list->next_branch = malloc(sizeof(BranchList));
+	branch_list->next_branch->branch = new_branch;
+	branch_list->next_branch->next_branch = NULL;
 }
 
 void git_init(Head **head, BranchList **branch_list) {
@@ -23,12 +38,9 @@ void git_init(Head **head, BranchList **branch_list) {
 
   (*branch_list)->branch = NULL;
   (*branch_list)->next_branch = NULL;
-  (*branch_list)->previous_branch = NULL;
 }
 
-void git_checkout(Head *const head, BranchList *const branch_list){
-
-}
+void git_checkout(Head *const head, BranchList *const branch_list) {}
 
 void git_log(Head *const head) {
   Commit *current = head->commit;
@@ -84,4 +96,15 @@ unsigned char *generate_string_to_hash(char *message) {
   strcpy((char *)string_to_hash, message);
   strcat((char *)string_to_hash, ctime(&current_date));
   return string_to_hash;
+}
+
+void list_branches(Head *const head, BranchList *const branch_list) {
+  BranchList *current_branch = branch_list;
+  while (current_branch) {
+    if (head->branch == current_branch->branch)
+      printf("* %s\n", current_branch->branch->name);
+    else
+      printf("%s", current_branch->branch->name);
+    current_branch = current_branch->next_branch;
+  }
 }
