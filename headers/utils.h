@@ -23,6 +23,8 @@ char *read_param(char *param, char *argv);
 
 char *get_main_command(char *args);
 
+char *get_command_arguments(char *main_command, char * args);
+
 bool handle_command(char *command, char *command_arguments, Head *const head,
                     BranchList *const branch_list);
 

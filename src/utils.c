@@ -52,8 +52,10 @@ void interactive_mode(char **argv, Head *const head,
     char *main_command = get_main_command(args);
     if (!main_command)
       printf("Comando invalido");
-    else
-      handle_command(main_command, args, head, branch_list);
+    else{
+	  char * command_arguments = get_command_arguments(main_command, args);	
+      handle_command(main_command, command_arguments, head, branch_list);
+	}
   } while (strcmp(args, "quit") != 0);
 }
 
@@ -64,7 +66,6 @@ void single_action_mode(char **argv, Head *const head,
 
 bool handle_command(char *command, char *command_arguments, Head *const head,
                     BranchList *const branch_list) {
-  command_arguments = strstr(command_arguments, "-");
   if (strcmp(command, "init") == 0) {
     return true;
   } else if (strcmp(command, "commit") == 0) {
@@ -73,19 +74,20 @@ bool handle_command(char *command, char *command_arguments, Head *const head,
       first_commit(message, head, branch_list);
     else
       git_commit(message, head);
-	free(message);
+	if(message)
+		free(message);
     return true;
   } else if (strcmp(command, "branch") == 0) {
 	char *branch_name = read_param("git branch ", command_arguments);
     git_branch(branch_name, head, branch_list);
-	free(branch_name);
+	if(branch_name)
+		free(branch_name);
     return true;
   } else if (strcmp(command, "checkout") == 0) {
     return true;
   } else if (strcmp(command, "merge") == 0) {
     return true;
   } else if (strcmp(command, "log") == 0) {
-    printf("entrei aqui");
     git_log(head);
     return true;
   } else {
@@ -107,6 +109,13 @@ char *get_main_command(char *args) {
   else if (strstr(args, "log"))
     return "log";
   return NULL;
+}
+
+char *get_command_arguments(char *main_command, char * args){
+	char* commands_start = malloc(strlen(args) + 1);
+	strcpy(commands_start, "git ");
+	strcat(commands_start, main_command);
+	return strstr(args,commands_start);
 }
 
 char *read_param(char *param, char *args) {

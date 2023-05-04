@@ -20,8 +20,9 @@ int main(int argc, char *argv[]) {
 
   if (TESTMODE)
     print_test(head, branch_list);
-  else if (is_interactive_mode(argv))
+  else if (is_interactive_mode(argv)){
     interactive_mode(argv, head, branch_list);
+  }
   else if (is_menu_mode(argv))
     menu_mode(head, branch_list);
   else

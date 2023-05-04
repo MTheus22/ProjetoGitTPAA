@@ -33,6 +33,10 @@ void git_init(Head **head, BranchList **branch_list);
 
 void git_branch(char *name, Head *const head, BranchList *const branch_list);
 
+void insert_branch_list(BranchList *const branch_list, Branch *new_branch);
+
+void initialize_branch_list(BranchList *const branch_list, Branch *new_branch);
+
 void git_commit(char *message, Head *const head);
 
 void git_checkout(Head *const head, BranchList *const branch_list);
