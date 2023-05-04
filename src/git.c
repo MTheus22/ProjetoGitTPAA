@@ -28,7 +28,7 @@ void list_branches(Head *const head, BranchList *const branch_list) {
     if (head->branch == current_branch->branch)
       printf("* %s\n", current_branch->branch->name);
     else
-      printf("%s", current_branch->branch->name);
+      printf("%s\n", current_branch->branch->name);
     current_branch = current_branch->next_branch;
   }
 }
@@ -58,8 +58,12 @@ void git_init(Head **head, BranchList **branch_list) {
   (*branch_list)->next_branch = NULL;
 }
 
-void git_checkout(Head *const head, BranchList *const branch_list) {
-
+void git_checkout(Head *const head, BranchList *const branch_list, char* branch_name) {
+	Branch *branch_searched = search_on_branch_list(branch_list,branch_name);
+	if(branch_searched){
+		head->branch = branch_searched;
+		head->commit = branch_searched->commit;
+	}
 }
 
 void git_log(Head *const head) {
@@ -71,7 +75,7 @@ void git_log(Head *const head) {
   while (current != NULL) {
     printf("Message: %s\n", current->message);
     printf("Hash: %s\n", get_hash_string(current->hash));
-    current = current->next;
+    current = current->previous;
   }
   printf("\n");
 }

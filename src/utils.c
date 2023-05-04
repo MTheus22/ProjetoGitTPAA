@@ -49,9 +49,10 @@ void interactive_mode(char **argv, Head *const head,
   char args[100];
   do {
     fgets(args, 100, stdin);
+	args[strlen(args) - 1] = '\0'; //Remove o \n (enter)
     char *main_command = get_main_command(args);
     if (!main_command)
-      printf("Comando invalido");
+      printf("Comando invalido\n");
     else{
 	  char * command_arguments = get_command_arguments(main_command, args);	
       handle_command(main_command, command_arguments, head, branch_list);
@@ -83,6 +84,8 @@ bool handle_command(char *command, char *command_arguments, Head *const head,
     	git_branch(branch_name, head, branch_list);
     return true;
   } else if (strcmp(command, "checkout") == 0) {
+	char *branch_name = read_param("git checkout", command_arguments);
+		git_checkout(head, branch_list, branch_name);
     return true;
   } else if (strcmp(command, "merge") == 0) {
     return true;
@@ -143,3 +146,15 @@ bool param_exist(char *param, char *args) {
   else
     return false;
 }
+
+Branch * search_on_branch_list(BranchList *const branch_list ,char* branch_name){
+	BranchList *current_node = branch_list;
+	while(current_node){
+		if(!strcmp(current_node->branch->name, branch_name))
+			return current_node->branch;
+		else
+			current_node = current_node->next_branch;
+	}
+	return NULL;
+}
+

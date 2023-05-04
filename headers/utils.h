@@ -19,6 +19,8 @@ void interactive_mode(char **argv, Head *const head,
 void single_action_mode(char **argv, Head *const head,
                         BranchList *const branch_list);
 
+Branch * search_on_branch_list(BranchList *const branch_list ,char* branch_name);
+
 char *read_param(char *param, char *argv);
 
 char *get_main_command(char *args);

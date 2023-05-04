@@ -24,7 +24,7 @@ typedef struct head {
   Commit *commit;
 } Head;
 
-typedef struct error{
+typedef struct error {
   bool is_error;
   char error_log[100];
 } Error;
@@ -39,7 +39,8 @@ void initialize_branch_list(BranchList *const branch_list, Branch *new_branch);
 
 void git_commit(char *message, Head *const head);
 
-void git_checkout(Head *const head, BranchList *const branch_list);
+void git_checkout(Head *const head, BranchList *const branch_list,
+                  char *branch_name);
 
 void git_log(Head *const head);
 
