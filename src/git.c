@@ -42,9 +42,9 @@ void insert_branch_list(BranchList *const branch_list, Branch *new_branch) {
   BranchList *last_node = branch_list;
   while (last_node->next_branch)
     last_node = last_node->next_branch;
-  branch_list->next_branch = malloc(sizeof(BranchList));
-  branch_list->next_branch->branch = new_branch;
-  branch_list->next_branch->next_branch = NULL;
+  last_node->next_branch = malloc(sizeof(BranchList));
+  last_node->next_branch->branch = new_branch;
+  last_node->next_branch->next_branch = NULL;
 }
 
 void git_init(Head **head, BranchList **branch_list) {
@@ -58,7 +58,9 @@ void git_init(Head **head, BranchList **branch_list) {
   (*branch_list)->next_branch = NULL;
 }
 
-void git_checkout(Head *const head, BranchList *const branch_list) {}
+void git_checkout(Head *const head, BranchList *const branch_list) {
+
+}
 
 void git_log(Head *const head) {
   Commit *current = head->commit;

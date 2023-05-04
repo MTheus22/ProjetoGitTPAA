@@ -74,14 +74,13 @@ bool handle_command(char *command, char *command_arguments, Head *const head,
       first_commit(message, head, branch_list);
     else
       git_commit(message, head);
-	if(message)
-		free(message);
     return true;
   } else if (strcmp(command, "branch") == 0) {
-	char *branch_name = read_param("git branch ", command_arguments);
-    git_branch(branch_name, head, branch_list);
-	if(branch_name)
-		free(branch_name);
+	char *branch_name = read_param("git branch", command_arguments);
+	if(!strcmp(branch_name, "\0"))
+		git_branch(NULL, head, branch_list);
+	else
+    	git_branch(branch_name, head, branch_list);
     return true;
   } else if (strcmp(command, "checkout") == 0) {
     return true;
