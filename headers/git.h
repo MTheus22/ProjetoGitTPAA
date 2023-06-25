@@ -5,8 +5,8 @@
 typedef struct commit {
   unsigned char *hash;
   char message[100];
-  struct commit *next;
-  struct commit *previous;
+  int commits_pointed; // numero de commits apontados pelo nó
+  struct commit *previous_commits;
 } Commit;
 
 typedef struct branch {

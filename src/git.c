@@ -82,13 +82,10 @@ void git_log(Head *const head) {
 
 void git_commit(char *message, Head *const head) {
   Commit *new_commit = malloc(sizeof(Commit));
-
+  new_commit->commits_pointed = 1;
   strcpy(new_commit->message, message);
   new_commit->hash = generate_hash(message);
-  new_commit->next = NULL;
-  new_commit->previous = head->commit;
-
-  head->commit->next = new_commit;
+  new_commit->previous_commits = head->commit;
 
   head->branch->commit = new_commit; // Branch se move para o comimt novo
   head->commit = new_commit;         // Head muda para o commit novo
@@ -99,8 +96,8 @@ void first_commit(char *message, Head *const head,
   head->commit = malloc(sizeof(Commit));
   head->commit->hash = generate_hash(message);
   strcpy(head->commit->message, message);
-  head->commit->previous = NULL;
-  head->commit->next = NULL;
+  head->commit->previous_commits = NULL;
+  head->commit->commits_pointed = 0;
   git_branch("main", head, branch_list);
   head->branch = branch_list->branch;
 }
