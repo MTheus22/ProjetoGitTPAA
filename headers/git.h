@@ -30,9 +30,10 @@ typedef struct head {
 typedef struct error {
   bool is_error;
   char error_log[100];
-} Error;
+} Status;
 
-void git_init(Head **head, BranchList **branch_list);
+void git_init(Head **head, BranchList **branch_list,
+              CommitsTable **commits_table);
 
 void git_branch(char *name, Head *const head, BranchList *const branch_list);
 
@@ -42,8 +43,9 @@ void initialize_branch_list(BranchList *const branch_list, Branch *new_branch);
 
 void git_commit(char *message, Head *const head, CommitsTable *commits_table);
 
-void git_checkout(Head *const head, BranchList *const branch_list,
-                  char *branch_name, CommitsTable *commits_table);
+Status git_checkout(Head *const head, BranchList *const branch_list,
+                  unsigned char *hash, char *branch_name,
+                  CommitsTable *commits_table);
 
 void git_log(Head *const head, CommitsTable *commits_table);
 

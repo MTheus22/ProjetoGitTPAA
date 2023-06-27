@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 CommitsTable *create_hash_table() {
@@ -47,21 +48,26 @@ CommitsListNode *search_commits_list(CommitsList *commits_list, unsigned char *h
 }
 
 void insert_commit_in_table(CommitsTable *hash_table, Commit *commit) {
+  if(hash_table == NULL){
+	  perror("The hash table you tried to insert is NULL");
+  }
   uint64_t table_index =
       get_index_in_table(commit->hash, hash_table->table_size);
   insert_in_commit_list(hash_table->commits_list_array + table_index, commit);
 }
 
 void insert_in_commit_list(CommitsList **commit_list_pointer, Commit *commit) {
-  if (*commit_list_pointer == NULL)
+  if (*commit_list_pointer == NULL){
     initialize_commit_list(commit_list_pointer, commit);
+  }
   else
     insert_commit_on_tail(*commit_list_pointer, commit);
 }
 
 void initialize_commit_list(CommitsList **commit_list_pointer, Commit *commit) {
   *commit_list_pointer = malloc(sizeof(CommitsList));
-  (*commit_list_pointer)->tail = (**commit_list_pointer).first_node;
+  (*commit_list_pointer)->first_node = malloc(sizeof(CommitsListNode));
+  (*commit_list_pointer)->tail = (*commit_list_pointer)->first_node;
   (*commit_list_pointer)->first_node->commit = commit;
   (*commit_list_pointer)->first_node->next = NULL;
   (*commit_list_pointer)->first_node->visited = false;
@@ -80,6 +86,7 @@ void insert_commit_on_tail(CommitsList *commit_list, Commit *commit) {
 uint64_t get_index_in_table(unsigned char *hash, int table_size) {
   uint32_t hash_chunks[8];
   uint64_t hash_sum = 0;
+  divide_sha256_in_32_bits_chunks(hash, hash_chunks);
   for (int i = 0; i < 8; i++)
     hash_sum += hash_chunks[i];
   return (uint64_t)hash_sum % table_size;

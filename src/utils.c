@@ -10,14 +10,14 @@
 void print_test() {
   Head *head;
   BranchList *branch_list;
-  CommitsTable *commits_table = create_hash_table();
-  git_init(&head, &branch_list);
+  CommitsTable *commits_table;
+  git_init(&head, &branch_list, &commits_table);
   printf("--Git init feito--\n");
-  first_commit("Primeiro commit", head, branch_list);
+  first_commit("Primeiro commit", head, branch_list, commits_table);
   printf("Nome da branch: %s\n", head->branch->name);
   printf("Hash do commit: %s\n", get_hash_string(head->branch->commit->hash));
   printf("Mensagem do commit: %s\n", head->branch->commit->message);
-  git_commit("Segundo commit", head);
+  git_commit("Segundo commit", head, commits_table);
   printf("\n--Depois de um commit--\n\n");
   printf("Nome da branch: %s\n", head->branch->name);
   printf("Hash do commit: %s\n", get_hash_string(head->branch->commit->hash));
@@ -42,6 +42,8 @@ bool hash_compare(unsigned char *hash1, unsigned char *hash2) {
   return true;
 }
 
+
+
 bool is_interactive_mode(char **argv) {
   if (strcmp(*argv + 1, "-i") || strcmp(*argv + 1, "-I"))
     return true;
@@ -58,6 +60,10 @@ bool is_menu_mode(char **argv) {
 
 void interactive_mode() {
   char args[100];
+  Head *head;
+  BranchList *branch_list;
+  CommitsTable *commits_table;
+    git_init(&head, &branch_list, &commits_table);
   do {
     fgets(args, 100, stdin);
     args[strlen(args) - 1] = '\0'; // Remove o \n (enter)
@@ -66,7 +72,7 @@ void interactive_mode() {
       printf("Comando invalido\n");
     else {
       char *command_arguments = get_command_arguments(main_command, args);
-      handle_command(main_command, command_arguments);
+      handle_command(main_command, command_arguments, head,branch_list, commits_table);
     }
   } while (strcmp(args, "quit") != 0);
 }
@@ -75,12 +81,8 @@ void menu_mode() {}
 
 void single_action_mode(char **argv) {}
 
-bool handle_command(char *command, char *command_arguments) {
-  Head *head;
-  BranchList *branch_list;
-  CommitsTable *commits_table = create_hash_table();
+bool handle_command(char *command, char *command_arguments, Head *head, BranchList *branch_list, CommitsTable *commits_table) {
   if (strcmp(command, "init") == 0) {
-    git_init(&head, &branch_list);
     return true;
   } else if (strcmp(command, "commit") == 0) {
     char *message = read_param("-m", command_arguments);
@@ -97,17 +99,49 @@ bool handle_command(char *command, char *command_arguments) {
       git_branch(branch_name, head, branch_list);
     return true;
   } else if (strcmp(command, "checkout") == 0) {
-    char *branch_name = read_param("git checkout", command_arguments);
-    git_checkout(head, branch_list, branch_name);
+    char *checkout_location = read_param("git checkout", command_arguments);
+	unsigned char* hash = convert_hash_string_to_hash(checkout_location);
+	if(hash == NULL)
+    	git_checkout(head, branch_list,NULL, checkout_location, commits_table);
+	else
+		git_checkout(head, branch_list, hash, checkout_location, commits_table);
     return true;
   } else if (strcmp(command, "merge") == 0) {
     return true;
   } else if (strcmp(command, "log") == 0) {
-    git_log(head);
+    git_log(head, commits_table);
     return true;
   } else {
     return false;
   }
+}
+
+int hex_char_to_int(char hexChar) {
+    if (hexChar >= '0' && hexChar <= '9') {
+        return hexChar - '0';
+    } else if (hexChar >= 'A' && hexChar <= 'F') {
+        return hexChar - 'A' + 10;
+    } else if (hexChar >= 'a' && hexChar <= 'f') {
+        return hexChar - 'a' + 10;
+    } else {
+        return -1;
+    }
+}
+
+unsigned char* convert_hash_string_to_hash(char *hash_string){
+	unsigned char* hash = malloc(SHA256_DIGEST_LENGTH);
+	int j = 0;
+	for(int i=0;i < SHA256_DIGEST_LENGTH * 2; i+=2){
+		int hex_value1 = hex_char_to_int(hash_string[i]);
+		if(hex_value1 == -1)
+			return NULL;
+		int hex_value2 = hex_char_to_int(hash_string[i + 1]);
+		if(hex_value2 == -1)
+			return NULL;
+		hash[j] = (hex_value1 << 4) | hex_value2;
+		j++;
+	}
+	return hash;
 }
 
 char *get_main_command(char *args) {
