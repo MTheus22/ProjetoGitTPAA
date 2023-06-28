@@ -62,6 +62,8 @@ void git_log(Head *const head, CommitsTable *commits_table);
 
 void print_commit(Commit *commit, CommitsTable *commits_table);
 
+void reset_nodes_to_false(Commit *commit, CommitsTable *commits_table);
+
 void first_commit(char *message, Head *const head,
                   BranchList *const branch_list, CommitsTable *commits_table, CommitList **commit_list);
 

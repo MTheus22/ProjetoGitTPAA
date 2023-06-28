@@ -126,6 +126,7 @@ Status git_merge(Head *head, BranchList *branch_list, unsigned char *hash,
         head->commit, branch_searched->commit);
     insert_commit_in_table(commits_table, new_commit);
     head->commit = new_commit;
+    head->branch->commit = new_commit;
     return status;
   } else {
     status.is_error = true;
@@ -137,6 +138,12 @@ Status git_merge(Head *head, BranchList *branch_list, unsigned char *hash,
 Commit *create_commit_and_point_to_two_others(Commit *commit1,
                                               Commit *commit2) {
   Commit *new_commit = malloc(sizeof(Commit));
+  char *hash1 = get_hash_string(commit1->hash);
+  char *hash2 = get_hash_string(commit2->hash);
+  *(hash1 + 32) = '\0';
+  *(hash2 + 32) = '\0';
+  strcpy(new_commit->message, strcat(hash1, hash2));
+  new_commit->hash = generate_hash(new_commit->message);
   if (new_commit == NULL)
     return NULL;
   new_commit->commits_pointed = 2;
@@ -157,6 +164,7 @@ void git_log(Head *const head, CommitsTable *commits_table) {
   else
     printf("--- Branch: %s ---\n", head->branch->name);
   print_commit(head->commit, commits_table);
+  reset_nodes_to_false(head->commit, commits_table);
 }
 
 void print_commit(Commit *commit, CommitsTable *commits_table) {
@@ -169,6 +177,13 @@ void print_commit(Commit *commit, CommitsTable *commits_table) {
   node->visited = true;
   for (int i = 0; i < commit->commits_pointed; i++)
     print_commit(*(commit->previous_commits + i), commits_table);
+}
+
+void reset_nodes_to_false(Commit *commit, CommitsTable *commits_table) {
+  CommitsListNode *node =
+      get_node_from_commits_list_table(commits_table, commit->hash);
+  for (int i = 0; i < commit->commits_pointed; i++)
+    reset_nodes_to_false(*(commit->previous_commits + i), commits_table);
   node->visited = false;
 }
 
