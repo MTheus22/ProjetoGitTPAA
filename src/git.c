@@ -116,6 +116,7 @@ Status git_merge(Head *head, BranchList *branch_list, unsigned char *hash,
       Commit *new_commit =
           create_commit_and_point_to_two_others(commit, head->commit);
       insert_commit_in_table(commits_table, new_commit);
+	  insert_on_commit_list(commit_list, new_commit);
       head->commit = new_commit;
       return status;
     }
@@ -125,6 +126,7 @@ Status git_merge(Head *head, BranchList *branch_list, unsigned char *hash,
     Commit *new_commit = create_commit_and_point_to_two_others(
         head->commit, branch_searched->commit);
     insert_commit_in_table(commits_table, new_commit);
+	insert_on_commit_list(commit_list, new_commit);
     head->commit = new_commit;
     head->branch->commit = new_commit;
     return status;
