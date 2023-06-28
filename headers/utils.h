@@ -2,6 +2,7 @@
 #define UTILS_H
 #include "../headers/git.h"
 #include "../headers/hash_table.h"
+#include "../headers/commit_list.h"
 #include <stdbool.h>
 
 void print_test();
@@ -32,6 +33,6 @@ char *get_main_command(char *args);
 
 char *get_command_arguments(char *main_command, char *args);
 
-bool handle_command(char *command, char *command_arguments, Head *head, BranchList *branch_list, CommitsTable *commits_table); 
+bool handle_command(char *command, char *command_arguments, Head *head, BranchList *branch_list, CommitsTable *commits_table, CommitList **commit_list); 
 
 #endif // !UTILS_H

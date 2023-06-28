@@ -5,6 +5,7 @@
 #include "../headers/git.h"
 #include "../headers/utils.h"
 #include "../headers/hash_table.h"
+#include "../headers/client.h"
 
 #define TESTMODE false
 
@@ -12,7 +13,6 @@ int main(int argc, char *argv[]) {
   if (TESTMODE)
     print_test();
   else if (is_interactive_mode(argv)){
-	  printf("modo interativo");
     interactive_mode();
   }
   else if (is_menu_mode(argv))

@@ -1,6 +1,7 @@
 #include "../headers/utils.h"
 #include "../headers/git.h"
 #include "../headers/hash_table.h"
+#include "../headers/commit_list.h"
 #include <openssl/sha.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -13,11 +14,9 @@ void print_test() {
   CommitsTable *commits_table;
   git_init(&head, &branch_list, &commits_table);
   printf("--Git init feito--\n");
-  first_commit("Primeiro commit", head, branch_list, commits_table);
   printf("Nome da branch: %s\n", head->branch->name);
   printf("Hash do commit: %s\n", get_hash_string(head->branch->commit->hash));
   printf("Mensagem do commit: %s\n", head->branch->commit->message);
-  git_commit("Segundo commit", head, commits_table);
   printf("\n--Depois de um commit--\n\n");
   printf("Nome da branch: %s\n", head->branch->name);
   printf("Hash do commit: %s\n", get_hash_string(head->branch->commit->hash));
@@ -63,6 +62,10 @@ void interactive_mode() {
   Head *head;
   BranchList *branch_list;
   CommitsTable *commits_table;
+  CommitList * commit_list = malloc(sizeof(CommitList));
+  commit_list->commit_list_node = NULL;
+  commit_list->number_nodes = 0;
+  commit_list->tail = NULL;
     git_init(&head, &branch_list, &commits_table);
   do {
     fgets(args, 100, stdin);
@@ -72,7 +75,7 @@ void interactive_mode() {
       printf("Comando invalido\n");
     else {
       char *command_arguments = get_command_arguments(main_command, args);
-      handle_command(main_command, command_arguments, head,branch_list, commits_table);
+      handle_command(main_command, command_arguments, head,branch_list, commits_table, &commit_list);
     }
   } while (strcmp(args, "quit") != 0);
 }
@@ -81,15 +84,15 @@ void menu_mode() {}
 
 void single_action_mode(char **argv) {}
 
-bool handle_command(char *command, char *command_arguments, Head *head, BranchList *branch_list, CommitsTable *commits_table) {
+bool handle_command(char *command, char *command_arguments, Head *head, BranchList *branch_list, CommitsTable *commits_table, CommitList **commit_list) {
   if (strcmp(command, "init") == 0) {
     return true;
   } else if (strcmp(command, "commit") == 0) {
     char *message = read_param("-m", command_arguments);
     if (head->branch == NULL && head->commit == NULL)
-      first_commit(message, head, branch_list, commits_table);
+      first_commit(message, head, branch_list, commits_table, commit_list);
     else
-      git_commit(message, head, commits_table);
+      git_commit(message, head, commits_table, commit_list);
     return true;
   } else if (strcmp(command, "branch") == 0) {
     char *branch_name = read_param("git branch", command_arguments);
@@ -107,11 +110,22 @@ bool handle_command(char *command, char *command_arguments, Head *head, BranchLi
 		git_checkout(head, branch_list, hash, checkout_location, commits_table);
     return true;
   } else if (strcmp(command, "merge") == 0) {
+    char *checkout_location = read_param("git merge", command_arguments);
+	unsigned char *hash = convert_hash_string_to_hash(checkout_location);
+	if(hash == NULL)
+		git_merge(head, branch_list, NULL, checkout_location, commits_table, commit_list);
+	else
+		git_merge(head, branch_list, hash, checkout_location, commits_table, commit_list);
     return true;
   } else if (strcmp(command, "log") == 0) {
     git_log(head, commits_table);
     return true;
-  } else {
+  } 
+  else if (strcmp(command, "push") == 0) {
+	git_push(branch_list, *commit_list);
+	return true;
+  }
+  else {
     return false;
   }
 }
@@ -157,6 +171,8 @@ char *get_main_command(char *args) {
     return "merge";
   else if (strstr(args, "log"))
     return "log";
+  else if(strstr(args, "push"))
+	  return "push";
   return NULL;
 }
 
